@@ -29,7 +29,7 @@ exports.index = function(req, res) {
 };
 
 
-// GET /quizes/:id  ---XXX---
+// GET /quizes/:id  
 exports.show = function(req, res) {
 	models.Quiz.find(req.params.quizId).then(function(quiz) {
 		res.render('quizes/show', { quiz: req.quiz, errors: []});
@@ -37,7 +37,7 @@ exports.show = function(req, res) {
 };
 
 
-//GET /quizes/:id/answer ---XXX---
+//GET /quizes/:id/answer 
 exports.answer = function(req, res) {
 	var resultado = 'Incorrecto';
 	if (req.query.respuesta === req.quiz.respuesta) {
@@ -46,7 +46,7 @@ exports.answer = function(req, res) {
 	res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado, errors: []});
 };
 
-//GET /quizes/new ---AAA---
+//GET /quizes/new 
 exports.new = function(req, res) { 
 	var quiz = models.Quiz.build(
 	{pregunta: "pregunta", respuesta: "respuesta", tema: "otro"}
