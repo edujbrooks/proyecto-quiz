@@ -29,7 +29,7 @@ exports.index = function(req, res) {
 };
 
 
-// GET /quizes/:id
+// GET /quizes/:id  ---XXX---
 exports.show = function(req, res) {
 	models.Quiz.find(req.params.quizId).then(function(quiz) {
 		res.render('quizes/show', { quiz: req.quiz, errors: []});
@@ -37,7 +37,7 @@ exports.show = function(req, res) {
 };
 
 
-//GET /quizes/:id/answer
+//GET /quizes/:id/answer ---XXX---
 exports.answer = function(req, res) {
 	var resultado = 'Incorrecto';
 	if (req.query.respuesta === req.quiz.respuesta) {
@@ -46,10 +46,10 @@ exports.answer = function(req, res) {
 	res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado, errors: []});
 };
 
-
+//GET /quizes/new ---AAA---
 exports.new = function(req, res) { 
 	var quiz = models.Quiz.build(
-	{pregunta: "pregunta", respuesta: "respuesta"}
+	{pregunta: "pregunta", respuesta: "respuesta", tema: "otro"}
 	);
 	res.render('quizes/new', {quiz:quiz, errors: []});
 };
@@ -63,7 +63,7 @@ exports.create = function(req, res) {
 			res.render('quizes/new', {quiz:quiz, errors: err.errors});
 		} else {
 			//guarda en BBDD los campos pregunta y respuesta de quiz
-			quiz.save({fields: ["pregunta","respuesta"]}).then( function () {
+			quiz.save({fields: ["pregunta","respuesta","tema"]}).then( function () {
 				res.redirect('/quizes');
 			});			
 		}
@@ -81,6 +81,7 @@ exports.edit = function (req, res) {
 exports.update = function(req, res) {
   req.quiz.pregunta  = req.body.quiz.pregunta;
   req.quiz.respuesta = req.body.quiz.respuesta;
+  req.quiz.tema = req.body.quiz.tema;
 
   req.quiz.validate().then(
     function(err){
@@ -88,7 +89,7 @@ exports.update = function(req, res) {
         res.render('quizes/edit', {quiz: req.quiz, errors: err.errors});
       } else {
         req.quiz     // save: guarda campos pregunta y respuesta en DB
-        .save( {fields: ["pregunta", "respuesta"]})
+        .save( {fields: ["pregunta", "respuesta","tema"]})
         .then( function(){ res.redirect('/quizes');});
       }     // Redirección HTTP a lista de preguntas (URL relativo)
     }
