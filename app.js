@@ -27,6 +27,25 @@ app.use(session());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+//MIDDLEWARE para cerrar sesion por tiempo incativo
+app.use(function(req, res, next) {
+	var user = req.session.user;
+	var waitTime = 120000;
+    if(user){//¿sesion existe?
+        if(!req.session.time){//si aún no existe
+            req.session.time=(new Date()).getTime();
+        }else{
+			var timeNow = new Date().getTime();
+            if(timeNow - req.session.time > waitTime){//120000 = 2 min
+                delete req.session.user;
+            }else{
+                req.session.time =(new Date()).getTime();
+            }
+        }
+    }
+    next();
+});
+
 //SESIONES Helpers dinamicos:
 app.use(function(req, res, next) {
 	//guardar path en session.redir para despues de login
@@ -36,7 +55,6 @@ app.use(function(req, res, next) {
 	res.locals.session = req.session; //hacer visible req.session en las vistas
 	next();
 });
-
 
 app.use('/', routes); //instalar enrutadores
 

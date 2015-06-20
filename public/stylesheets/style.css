@@ -49,3 +49,8 @@ nav span {
 .right{
 	float: right;
 }
+
+ul
+{
+    list-style-type: none;
+}
