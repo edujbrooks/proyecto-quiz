@@ -1,5 +1,5 @@
 var models = require('../models/models.js');
-//var sequelize = require('sequelize');
+
 // GET /quizes
 exports.show = function(req, res) {
 	var statistics = {nQuestions: 0, 
@@ -21,27 +21,14 @@ exports.show = function(req, res) {
     }
 	).catch(function(error) {next(error);});
 	
-	//PREGUNTAS SIN COMENTARIOS
-	/*models.Comment.count({distinct: true}).then(function(total) {
-		statistics["nQuestionsNoComment"] = total;
-    }
-	).catch(function(error) {next(error);});	*/
-	
-	/*models.sequelize.query('SELECT count(*) AS n FROM "Quizzes" WHERE "id" IN (SELECT DISTINCT "QuizId" FROM "Comments")').success(function(total){
-		statistics["nQuestionsWithComment"] = total[0].n;
-	}).catch(function(error) {next(error);});*/
-	
-	
-	
-	
-	//PREGUNTA CON COMENTARIOS
-	/*models.Quiz.count({where: {name: 'someone2'}}).then(function(total) {
-		statistics["nQuestionsWithComment"] = total;
-    }
-	).catch(function(error) {next(error);});*/	
+	//PREGUNTAS CON COMENTARIOS
+	models.sequelize.query('SELECT count(DISTINCT("QuizId")) AS "count" FROM "comments" AS "comment"').success(function(total){
+		statistics["nQuestionsWithComment"] = total[0][0].count;
+	}).catch(function(error) {next(error);});
 	
 	setTimeout(function(){
-	   statistics["nCommentsPerQuestion"] = statistics["nComments"]/statistics["nQuestions"];
+	   if (statistics["nQuestions"] !== 0) statistics["nCommentsPerQuestion"] = (statistics["nComments"]/statistics["nQuestions"]).toFixed(2);
+	   statistics["nQuestionsNoComment"] = statistics["nQuestions"]-statistics["nQuestionsWithComment"];
        res.render('statistics.ejs', { Estadisticas: statistics, errors: [] });
     }, 200);
 };
